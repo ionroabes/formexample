@@ -12,6 +12,7 @@ function validateform(){
     var pass = $('#pass').val().trim();
     var confpass = $('#confpass').val().trim();
     var email = $("#email").val().trim();
+    var richiestapendente = false;
     // valida nome
     if(nome.length < 4) {
         return false;
@@ -35,27 +36,41 @@ function validateform(){
 
     $('#email').on('blur', function(){
         var elemento = $(this);
+        var email = $(this).val().trim();
 
         if(validateEmail(email)){
-            $.post({
-                url: 'email.php',
-                data: {
-                    email: elemento.val()
-                },
-                dataType: 'json',
-        
-                success: function(result) {
-                    if (result.valid) {
-                        elemento.removeClass('is-invalid')
-                        elemento.addClass('is-valid')
+            if(!richiestapendente){
+
+                
+
+                $.post(
+                    'email.php',
+                    {
+                        email: email
+                    },
+                    'json',
+            
+                    function(result) {
+                        if (result.valid) {
+                            elemento.removeClass('is-invalid')
+                            elemento.addClass('is-valid')
+                        }
+                        else {
+                            elemento.removeClass('is-valid')
+                            elemento.addClass('is-invalid')
+                        }
+                        richiestapendente = false;
                     }
-                    else {
-                        elemento.removeClass('is-valid')
-                        elemento.addClass('is-invalid')
-                    }
-                }
-            })
+                )
+            }
+            richiestapendente = true;
+            
+
         }
+        else{
+
+        }
+        
         return false;
     })
 
@@ -79,8 +94,15 @@ $('#form').submit(function(e){
 
 $('#username').on('blur', function(){
     var elemento = $(this);
+    var username = $('#username').val().trim();
     if (username.length >= 7 && username.length <= 20){
+        // if(richiestapendente == true){
 
+        // }
+        // else{
+        //     console.log('va')
+        
+        // richiestapendente = true
         $.ajax({
             url: 'username.php',
             data: {
@@ -100,16 +122,18 @@ $('#username').on('blur', function(){
                 }
             }
         })
+    // }
     } else {
+        console.log('non va')
         elemento.removeClass('is-valid')
         elemento.addClass('is-invalid')
     }
+    // richiestapendente= false;
 })
 
 
-$('#email').on('blur', function(){
+$('#email').on('input', function(){
     var elemento = $(this);
-
     $.post({
         url: 'email.php',
         data: {
