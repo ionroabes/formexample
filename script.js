@@ -13,7 +13,7 @@ function validateform(){
     var confpass = $('#confpass').val().trim();
     var email = $("#email").val().trim();
     // valida nome
-    if(nome.lenght < 4) {
+    if(nome.length < 4) {
         return false;
     }
 
@@ -22,21 +22,7 @@ function validateform(){
         return false;
     }
     //valida username
-    if(username.length < 7 || username.lenght > 20) {
-    //     var formData = $('form').serialize();
-    //     $.ajax({
-    //         url: 'username.php',
-    //         data: formData,
-    //         error: function() {
-    //             $('<img src="spunta.png">').insertAfter(".immagine");
-    //             alert('giusto')
-    //         },
-    //         success: function(){
-    //             $('<img src="xrossa.png">').insertAfter(".immagine");
-    //             alert('già presente')
-    //         }
-            
-    // })
+    if(username.length < 7 || username.length > 20) {
         return false;
     }
 
@@ -46,11 +32,35 @@ function validateform(){
     }
 
     //valida email
-    if(validateEmail(email)){
-        return false;
-    }
 
-    if ($('#form').find('is-invalid').length >= 0) {
+    $('#email').on('blur', function(){
+        var elemento = $(this);
+
+        if(validateEmail(email)){
+            $.post({
+                url: 'email.php',
+                data: {
+                    email: elemento.val()
+                },
+                dataType: 'json',
+        
+                success: function(result) {
+                    if (result.valid) {
+                        elemento.removeClass('is-invalid')
+                        elemento.addClass('is-valid')
+                    }
+                    else {
+                        elemento.removeClass('is-valid')
+                        elemento.addClass('is-invalid')
+                    }
+                }
+            })
+        }
+        return false;
+    })
+
+    if ($('#form').find('.is-invalid').length >= 0) {
+
         return false;
     }
    
@@ -69,13 +79,42 @@ $('#form').submit(function(e){
 
 $('#username').on('blur', function(){
     var elemento = $(this);
+    if (username.length >= 7 && username.length <= 20){
 
-    $.ajax({
-        url: 'username.php',
+        $.ajax({
+            url: 'username.php',
+            data: {
+                username: elemento.val()
+            },
+            method: 'post',
+            dataType: 'json',
+
+            success: function(result) {
+                if (result.valid) {
+                    elemento.removeClass('is-invalid')
+                    elemento.addClass('is-valid')
+                }
+                else {
+                    elemento.removeClass('is-valid')
+                    elemento.addClass('is-invalid')
+                }
+            }
+        })
+    } else {
+        elemento.removeClass('is-valid')
+        elemento.addClass('is-invalid')
+    }
+})
+
+
+$('#email').on('blur', function(){
+    var elemento = $(this);
+
+    $.post({
+        url: 'email.php',
         data: {
-            username: elemento.val()
+            email: elemento.val()
         },
-        method: 'post',
         dataType: 'json',
 
         success: function(result) {
