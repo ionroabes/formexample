@@ -1,5 +1,5 @@
 <?php
-
+sleep(2);
 $email = trim(@$_POST['email']);
 
 if (empty($email)) {
